@@ -62,6 +62,9 @@ public class BookService {
         return bookRepo.findByAuthorContainingIgnoreCase(author);
     }
     
+    // Here we are using several SpringBoot annotations to specify DateTime formatting and multiple Path Variables. 
+    // More about Java Date Formatting Syntax and Patterns 
+    //      - http://tutorials.jenkov.com/java-internationalization/simpledateformat.html
     @RequestMapping("published/{fromDate}/{toDate}")
     @ResponseBody
     public List<Book> findBookByPublishDateRange(
