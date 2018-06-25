@@ -7,8 +7,11 @@ package com.adamclmns.javabasics.springboot.rest;
 
 import com.adamclmns.javabasics.springboot.data.BookRepository;
 import com.adamclmns.javabasics.springboot.models.Book;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,4 +44,29 @@ public class BookService {
         return bookRepo.findAll();
     }
     
+    @RequestMapping("count")
+    @ResponseBody
+    public int countBooks(){
+        return ((List<Book>)bookRepo.findAll()).size();
+    }
+    
+    @RequestMapping("title/{title}")
+    @ResponseBody
+    public List<Book> findBookByTitle(@PathVariable("title") String title){
+        return bookRepo.findByTitleContainingIgnoreCase(title);
+    }
+    
+    @RequestMapping("author/{author}")
+    @ResponseBody
+    public List<Book> findBookByAuthor(@PathVariable("author") String author){
+        return bookRepo.findByAuthorContainingIgnoreCase(author);
+    }
+    
+    @RequestMapping("published/{fromDate}/{toDate}")
+    @ResponseBody
+    public List<Book> findBookByPublishDateRange(
+            @PathVariable("fromDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date fromDate, 
+            @PathVariable("toDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date toDate){
+        return bookRepo.findAllByPublishedGreaterThanEqualAndPublishedLessThanEqual(fromDate, toDate);
+    }
 }
