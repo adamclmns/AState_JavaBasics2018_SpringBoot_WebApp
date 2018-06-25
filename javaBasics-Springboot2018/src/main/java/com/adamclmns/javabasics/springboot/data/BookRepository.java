@@ -23,9 +23,21 @@ public interface BookRepository extends CrudRepository<Book,UUID>{
     // "Containing" tells SpringBoot that we want to search by *part* of the title, not the whole thing.
     // "IngoreCase" tells SpringBoot that it should ignore upper/lower case. ie - "Wind" vs "wind" vs "WIND"
     List<Book> findByTitleContainingIgnoreCase(String title);
+    
     List<Book> findByAuthor(String author);
+    List<Book> findByAuthorContaining(String author);
+    List<Book> findByAuthorIgnoreCase(String author);
     List<Book> findByAuthorContainingIgnoreCase(String author);
     
     // Here we use some more SpringBoot JPA/CRUD Repository magic
-    List<Book> findAllByPublishedGreaterThanEqualAndPublishedLessThanEqual(Date fromDate, Date toDate);
+    List<Book> findByPublishedGreaterThanEqualAndPublishedLessThanEqual(Date fromDate, Date toDate);
+    
+    
+    // Spring JPA Key Words for building fancy queries like this one - 
+    //https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation 
+    // Things get wierd with "AND" and "OR" queries like these, because we have to provide an argument for each field.
+    // Notice there's a String for Title, and one for Author. 
+    List<Book> findByTitleOrAuthor(String title, String author);
+    List<Book> findByTitleLikeOrAuthorLike(String title, String author);
+    List<Book> findByTitleContainsIgnoreCaseOrAuthorContainsIgnoreCase(String title, String author);
 }

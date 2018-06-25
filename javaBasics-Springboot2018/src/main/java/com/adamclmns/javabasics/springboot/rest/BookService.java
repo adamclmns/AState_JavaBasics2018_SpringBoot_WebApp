@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Adam
  * @RestController tells SpringBoot that this class will handle HTTP Requests in a RESTful way
+ * @RequestMapping - when applied to a class, this sets a "base" path for the rest of the methods. 
+ *      All paths will start with /books 
  */
 @RestController
 @RequestMapping("books")
@@ -38,7 +40,7 @@ public class BookService {
         return "Hello from Book Service!";
     }
     
-    @RequestMapping("")
+    @RequestMapping("")// This one will just be /books/
     @ResponseBody
     public Iterable<Book> getAllBooks(){
         return bookRepo.findAll();
@@ -70,6 +72,15 @@ public class BookService {
     public List<Book> findBookByPublishDateRange(
             @PathVariable("fromDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date fromDate, 
             @PathVariable("toDate") @DateTimeFormat(pattern="yyyy-MM-dd") Date toDate){
-        return bookRepo.findAllByPublishedGreaterThanEqualAndPublishedLessThanEqual(fromDate, toDate);
+        return bookRepo.findByPublishedGreaterThanEqualAndPublishedLessThanEqual(fromDate, toDate);
     }
+    
+    // Because CRUD Repositories require us to use two parameters when searching two fields, 
+    // We've just used the same variable to satisfy both arguments. So we can search both fields for the same value
+    @RequestMapping("search/{searchTerm}")
+    @ResponseBody
+    public List<Book> searchByTitleAuthorString(@PathVariable("searchTerm") String searchTerm){
+        return bookRepo.findByTitleContainsIgnoreCaseOrAuthorContainsIgnoreCase(searchTerm, searchTerm);
+    }
+    
 }
